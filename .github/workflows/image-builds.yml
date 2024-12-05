@@ -66,6 +66,8 @@ env:
   IMAGE_REGISTRY: quay.io
   IMAGE_ORG: r3hankhan
   SET_LATEST: ${{ inputs.set_latest }}
+  QUAYIO_USERNAME: r3hankhan
+  QUAYIO_PASSWORD: FI58faza0po36UOtaHKgc1TFV++AMq5GUVT36m2m5y+MGlwOC+fwxGjwdOZCM8sWgphX7anNhlbkAj+TDTKU9A==
 jobs:
   build-images-with-tag:
     continue-on-error: false
