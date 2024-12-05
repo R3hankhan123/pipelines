@@ -1,6 +1,10 @@
 name: Build images from sources.
 run-name: Build images
 on:
+  push:
+    branches:
+      - master
+      - test
   workflow_call:
     inputs:
       src_branch:
