@@ -114,8 +114,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           driver: docker-container
-          buildkitd-flags: --debug
-          name: mybuilder
+          use: true
 
       - name: Verify Buildx setup
         run: docker buildx ls
@@ -165,7 +164,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          builder: default
           platforms: linux/s390x,linux/ppc64le,linux/amd64
       # This step generates an artifact attestation for the image,
       # which is an unforgeable statement about where and how it was built.
