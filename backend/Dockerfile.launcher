@@ -13,15 +13,12 @@
 # limitations under the License.
 
 FROM golang:1.21.7-alpine3.19 as builder
-
+ARG TARGETOS
+ARG TARGETARCH
 WORKDIR /go/src/github.com/kubeflow/pipelines
 COPY . .
 
-RUN ARCH=$(uname -m) && \
-    if [ "$ARCH" = "x86_64" ]; then \
-        ARCH="amd64"; \
-    fi && \
-    GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH go build -tags netgo -ldflags '-extldflags "-static"' -o /bin/launcher-v2 ./backend/src/v2/cmd/launcher-v2/*.go
+RUN GO111MODULE=on CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -tags netgo -ldflags '-extldflags "-static"' -o /bin/launcher-v2 ./backend/src/v2/cmd/launcher-v2/*.go
 
 # Check licenses and comply with license terms.
 RUN ./hack/install-go-licenses.sh
