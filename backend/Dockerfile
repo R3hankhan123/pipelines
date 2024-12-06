@@ -15,6 +15,8 @@
 
 # 1. Build api server application
 FROM golang:1.21.7-bookworm as builder
+# Build the model-registry binary
+ARG TARGETARCH
 RUN apt-get update && apt-get install -y cmake clang musl-dev openssl
 WORKDIR /go/src/github.com/kubeflow/pipelines
 COPY . .
@@ -37,14 +39,10 @@ RUN python3 -m pip install -r requirements.txt --no-cache-dir
 # Downloading Argo CLI so that the samples are validated
 ENV ARGO_VERSION v3.4.17
 #Support s390x and ppc64le
-RUN ARCH=$(uname -m); \
-    if [ "$ARCH" = "x86_64" ]; then \
-        ARCH="amd64"; \
-    fi \
-    && curl -sLO https://github.com/argoproj/argo-workflows/releases/download/${ARGO_VERSION}/argo-linux-${ARCH}.gz && \
-    gunzip argo-linux-${ARCH}.gz && \
-    chmod +x argo-linux-${ARCH} && \
-    mv ./argo-linux-${ARCH} /usr/local/bin/argo
+RUN curl -sLO https://github.com/argoproj/argo-workflows/releases/download/${ARGO_VERSION}/argo-linux-${TARGETARCH}.gz && \
+    gunzip argo-linux-${TARGETARCH}.gz && \
+    chmod +x argo-linux-${TARGETARCH} && \
+    mv ./argo-linux-${TARGETARCH} /usr/local/bin/argo
 
 WORKDIR /
 COPY ./samples /samples
