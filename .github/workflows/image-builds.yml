@@ -112,6 +112,10 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
+          buildkitd-flags: --debug
+          name: mybuilder
 
       - name: Verify Buildx setup
         run: docker buildx ls
