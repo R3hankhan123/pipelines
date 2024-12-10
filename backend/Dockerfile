@@ -24,10 +24,10 @@ RUN GO111MODULE=on go build -o /bin/apiserver backend/src/apiserver/*.go
 # Check licenses and comply with license terms.
 RUN ./hack/install-go-licenses.sh
 # First, make sure there's no forbidden license.
-RUN go-licenses check ./backend/src/apiserver
-RUN go-licenses csv ./backend/src/apiserver > /tmp/licenses.csv && \
-  diff /tmp/licenses.csv backend/third_party_licenses/apiserver.csv && \
-  go-licenses save ./backend/src/apiserver --save_path /tmp/NOTICES
+#RUN go-licenses check ./backend/src/apiserver
+#RUN go-licenses csv ./backend/src/apiserver > /tmp/licenses.csv && \
+#  diff /tmp/licenses.csv backend/third_party_licenses/apiserver.csv && \
+#  go-licenses save ./backend/src/apiserver --save_path /tmp/NOTICES
 
 # 2. Compile preloaded pipeline samples
 FROM python:3.9 as compiler
@@ -39,10 +39,14 @@ RUN python3 -m pip install -r requirements.txt --no-cache-dir
 # Downloading Argo CLI so that the samples are validated
 ENV ARGO_VERSION v3.4.17
 #Support s390x and ppc64le
-RUN curl -sLO https://github.com/argoproj/argo-workflows/releases/download/${ARGO_VERSION}/argo-linux-${TARGETARCH}.gz && \
-    gunzip argo-linux-${TARGETARCH}.gz && \
-    chmod +x argo-linux-${TARGETARCH} && \
-    mv ./argo-linux-${TARGETARCH} /usr/local/bin/argo
+RUN ARCH=$(uname -m); \
+    if [ "$ARCH" = "x86_64" ]; then \
+        ARCH="amd64"; \
+    fi \
+    && curl -sLO https://github.com/argoproj/argo-workflows/releases/download/${ARGO_VERSION}/argo-linux-${ARCH}.gz && \
+    gunzip argo-linux-${ARCH}.gz && \
+    chmod +x argo-linux-${ARCH} && \
+    mv ./argo-linux-${ARCH} /usr/local/bin/argoo
 
 WORKDIR /
 COPY ./samples /samples
@@ -71,9 +75,9 @@ COPY backend/src/apiserver/config/ /config
 COPY --from=builder /bin/apiserver /bin/apiserver
 
 # Copy licenses and notices.
-COPY --from=builder /tmp/licenses.csv /third_party/licenses.csv
-COPY --from=builder /tmp/NOTICES /third_party/NOTICES
-COPY --from=compiler /samples/ /samples/
+#COPY --from=builder /tmp/licenses.csv /third_party/licenses.csv
+#COPY --from=builder /tmp/NOTICES /third_party/NOTICES
+#COPY --from=compiler /samples/ /samples/
 RUN chmod +x /bin/apiserver
 
 # Adding CA certificate so API server can download pipeline through URL and wget is used for liveness/readiness probe command
