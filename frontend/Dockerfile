@@ -23,7 +23,7 @@ RUN mkdir -p ./server/dist && \
 
 # Generate the dependency licenses files (one for the UI and one for the webserver),
 # concatenate them to one file under ./src/server
-RUN ./scripts/yarn-licenses.sh
+# RUN ./scripts/yarn-licenses.sh
 
 FROM node:18.18.2-alpine3.17
 
