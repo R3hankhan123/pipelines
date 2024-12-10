@@ -28,8 +28,8 @@ RUN ./hack/install-go-licenses.sh
 # First, make sure there's no forbidden license.
 #RUN go-licenses check ./backend/src/v2/cmd/driver
 #RUN go-licenses csv ./backend/src/v2/cmd/driver > /tmp/licenses.csv && \
-    diff /tmp/licenses.csv backend/third_party_licenses/driver.csv && \
-    go-licenses save ./backend/src/v2/cmd/driver --save_path /tmp/NOTICES
+#    diff /tmp/licenses.csv backend/third_party_licenses/driver.csv && \
+#    go-licenses save ./backend/src/v2/cmd/driver --save_path /tmp/NOTICES
 
 FROM alpine:3.19
 
